@@ -1,0 +1,43 @@
+// Code snippet for segment tree.
+// starts with the question to find minimum in the given range for q number of queries.
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> seg, nums;
+void buildSegmentTree(int idx, int low, int high) {
+    if(low == high) {
+        seg[idx] = nums[low];
+        return;
+    }
+    int mid = low + (high - low) / 2;
+    buildSegmentTree(2*idx + 1, low, mid);
+    buildSegmentTree(2*idx + 2, mid + 1, high);
+    seg[idx] = min(seg[2*idx + 1], seg[2*idx + 2]);
+}
+
+int querySegment(int idx, int low, int high, int l, int r) {
+    if(r < low or high < l) {
+        // returning 1e9 to find minimum element in the given range, 
+        // it depends on the type of question we are solving.
+        return 1e9;
+    }
+    // complete overlap case
+    if(low >= l and high <= r) {
+        return seg[idx];
+    }
+    // partial overlap case, calculate output from both recursive calls.
+    int mid = (high + low) / 2;
+    int left = querySegment(2*idx + 1, low, mid, l, r);
+    int right = querySegment(2*idx + 2, mid + 1, high, l, r);
+    return min(left, right);
+}
+
+int main() {
+    int n = 6;
+    nums = {2, 3, 4, 2, 6, 7};
+    seg.resize(4*n);
+    buildSegmentTree(0, 0, n-1);
+    cout<<"hi"<<endl;
+    cout<<querySegment(0, 0, n-1, 2, 4)<<endl;
+  return 0;
+}
